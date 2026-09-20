@@ -73,6 +73,7 @@ export default function Contact() {
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState("idle"); // idle | sending | sent
   const [copied, setCopied] = useState("");
+  const [gmailUrl, setGmailUrl] = useState("");
 
   const update = (key) => (event) => {
     setForm((current) => ({ ...current, [key]: event.target.value }));
@@ -98,6 +99,12 @@ export default function Contact() {
     setStatus("sending");
     const subject = encodeURIComponent(`Portfolio enquiry from ${form.name.trim()}`);
     const body = encodeURIComponent(`${form.message.trim()}\n\n— ${form.name.trim()}\n${form.email.trim()}`);
+
+    // Same draft, two routes: the visitor's own mail client, and Gmail in the
+    // browser for anyone whose machine has no mailto: handler registered.
+    setGmailUrl(
+      `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(profile.email)}&su=${subject}&body=${body}`
+    );
 
     window.setTimeout(() => {
       window.location.href = `mailto:${profile.email}?subject=${subject}&body=${body}`;
@@ -233,7 +240,7 @@ export default function Contact() {
             ) : status === "sent" ? (
               <span className="flex flex-1 items-center justify-center gap-2 py-1.5">
                 <Check size={15} weight="bold" />
-                Draft ready
+                Check your mail client
               </span>
             ) : (
               <>
@@ -246,12 +253,44 @@ export default function Contact() {
           </button>
 
           {status === "sent" ? (
-            <p role="status" className="text-center font-mono text-[11px] text-graphite-500">
-              Nothing came through? Write to{" "}
-              <a href={`mailto:${profile.email}`} className="text-pine underline underline-offset-4">
-                {profile.email}
-              </a>
-            </p>
+            <div role="status" className="flex flex-col items-center gap-2">
+              <p className="text-center font-mono text-[11px] text-graphite-500">
+                Nothing opened? Not every browser has a mail app wired up.
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 font-mono text-[11px]">
+                <a
+                  href={gmailUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 text-pine underline underline-offset-4"
+                >
+                  Open the draft in Gmail
+                  <ArrowUpRight size={11} weight="bold" aria-hidden="true" />
+                </a>
+                <span className="text-graphite-300" aria-hidden="true">
+                  /
+                </span>
+                <button
+                  type="button"
+                  onClick={() => copy("compose", `${profile.email}
+
+${form.message.trim()}`)}
+                  className="inline-flex items-center gap-1 text-graphite-500 underline underline-offset-4 transition-colors hover:text-graphite-950"
+                >
+                  {copied === "compose" ? (
+                    <>
+                      <Check size={11} weight="bold" aria-hidden="true" />
+                      Copied
+                    </>
+                  ) : (
+                    <>
+                      <Copy size={11} weight="bold" aria-hidden="true" />
+                      Copy address and message
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
           ) : null}
           </div>
         </motion.form>
