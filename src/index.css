@@ -1,0 +1,204 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  color-scheme: light;
+}
+
+html {
+  overflow-x: clip;
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  overflow-x: clip;
+  background-color: #f2efe9;
+}
+
+@layer base {
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+    text-wrap: balance;
+  }
+
+  p,
+  li,
+  dd {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid #1d6a57;
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+}
+
+@layer components {
+  /* ---- Double-bezel surface -------------------------------------------
+     Nothing sits flat on the paper. A `shell` is the machined tray: warmer,
+     recessed, hairline-ruled. A `core` is the plate that drops into it, with
+     its own top highlight and a radius calculated to stay concentric. */
+  .shell {
+    @apply rounded-plate border border-rule-soft bg-paper-shell p-1.5 shadow-plate;
+  }
+
+  .core {
+    @apply rounded-core border border-white/70 bg-paper-raised shadow-core;
+  }
+
+  /* one-piece surface for small nested elements (diagram wells, inputs) */
+  .well {
+    @apply rounded-nest border border-rule-soft bg-paper shadow-well;
+  }
+
+  /* mono label used above every section and on every metadata row */
+  .label {
+    @apply font-mono text-[11px] uppercase tracking-[0.18em] text-graphite-500;
+  }
+
+  /* microscopic pill badge that precedes a major heading */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full border border-rule-soft bg-paper-raised/80 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-graphite-500 shadow-inset;
+  }
+
+  .tag {
+    @apply inline-flex items-center rounded-full border border-rule-soft bg-paper px-2.5 py-1 font-mono text-[11px] text-graphite-700 transition-colors duration-500 ease-fluid hover:border-rule hover:bg-paper-raised hover:text-graphite-950;
+  }
+
+  /* ---- Island buttons -------------------------------------------------- */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-medium transition-all duration-500 ease-fluid active:scale-[0.98];
+  }
+
+  .btn-solid {
+    @apply btn bg-graphite-950 text-paper shadow-lift hover:bg-pine-deep;
+  }
+
+  .btn-outline {
+    @apply btn border border-rule bg-paper-raised/70 text-graphite-900 hover:border-graphite-300 hover:bg-paper-raised;
+  }
+
+  /* a button carrying a nib keeps its right padding tight so the nested
+     circle sits flush inside the pill */
+  .btn-nib-host {
+    @apply py-1.5 pl-6 pr-1.5;
+  }
+
+  /* the button-in-button: the arrow never sits naked next to the label.
+     Internal kinetic tension — the nib drifts diagonally inside the pill
+     while the pill itself presses down. */
+  .btn-nib {
+    @apply grid h-8 w-8 shrink-0 place-items-center rounded-full transition-transform duration-500 ease-fluid;
+  }
+
+  .btn:hover .btn-nib {
+    transform: translate3d(2px, -1px, 0) scale(1.06);
+  }
+
+  .btn-solid .btn-nib {
+    @apply bg-white/15;
+  }
+
+  .btn-outline .btn-nib {
+    @apply bg-graphite-950/[0.06];
+  }
+
+  /* ruled group: replaces card stacks for dense lists */
+  .ruled > * + * {
+    @apply border-t border-rule-soft;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ---- Fixed atmosphere layers ------------------------------------------
+   All three are fixed and pointer-events-none, so scrolling never repaints
+   them and no blur filter ever lands on a scrolling container. */
+
+/* warm ambient wash: two very soft orbs, one pine, one clay */
+.aura {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: radial-gradient(
+      52rem 38rem at 78% -6%,
+      rgba(29, 106, 87, 0.13),
+      transparent 68%
+    ),
+    radial-gradient(44rem 34rem at 4% 22%, rgba(168, 84, 51, 0.08), transparent 66%),
+    radial-gradient(60rem 50rem at 50% 108%, rgba(29, 106, 87, 0.07), transparent 70%);
+}
+
+/* blueprint grid */
+.blueprint {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+  background-image: linear-gradient(rgba(25, 23, 20, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(25, 23, 20, 0.04) 1px, transparent 1px);
+  background-size: 88px 88px;
+  mask-image: radial-gradient(120% 90% at 50% 0%, #000 20%, transparent 78%);
+  -webkit-mask-image: radial-gradient(120% 90% at 50% 0%, #000 20%, transparent 78%);
+}
+
+/* film grain — gives the bone paper a physical tooth */
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 30;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection {
+  background: #1d6a57;
+  color: #faf8f4;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #e9e5dc;
+}
+::-webkit-scrollbar-thumb {
+  background: #c3bdb1;
+  border-radius: 9999px;
+  border: 2px solid #e9e5dc;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #1d6a57;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
